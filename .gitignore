@@ -1,0 +1,33 @@
+# Environment
+.env
+.env.local
+.env.production
+
+# Node
+node_modules/
+dist/
+
+# Logs
+*.log
+
+# VS Code
+.vscode/
+.vercel/
+
+# JetBrains
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Go
+bin/
+coverage.out
+
+# Docker
+pgdata/
+
+# Build
+build/
+tmp/

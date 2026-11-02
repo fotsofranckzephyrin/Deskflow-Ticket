@@ -1,0 +1,43 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-deskflow}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in the project .env}
+      POSTGRES_DB: ${POSTGRES_DB:-deskflow}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - deskflow_postgres:/var/lib/postgresql/data
+      - ./database/migrations.sql:/docker-entrypoint-initdb.d/01-migrations.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$${POSTGRES_USER}\" -d \"$${POSTGRES_DB}\""]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      APP_PORT: "8081"
+      DB_HOST: postgres
+      DB_PORT: "5432"
+      DB_USER: ${POSTGRES_USER:-deskflow}
+      DB_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in the project .env}
+      DB_NAME: ${POSTGRES_DB:-deskflow}
+      JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in the project .env}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:?Set ADMIN_EMAIL in the project .env}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in the project .env}
+      ADMIN_NAME: ${ADMIN_NAME:-DeskFlow Administrator}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:8081:8081"
+
+volumes:
+  deskflow_postgres:

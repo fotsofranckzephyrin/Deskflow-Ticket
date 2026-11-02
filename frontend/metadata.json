@@ -1,0 +1,5 @@
+{
+  "name": "Deskflow - Gestion des tickets en Temps Réel",
+  "description": "Plateforme modulaire haute performance de gestion des tickets en temps réel avec Clean Architecture Go/Gin/PostgreSQL et frontend React.",
+  "requestFramePermissions": []
+}
